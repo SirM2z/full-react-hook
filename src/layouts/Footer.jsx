@@ -1,9 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { Divider, Typography, withStyles } from '@material-ui/core';
+import { Divider, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 
-const Footer = ({ classes, className }) => {
+const useStyles = makeStyles(theme => ({
+  root: {
+    padding: theme.spacing(4)
+  },
+  company: {
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(0.5)
+  }
+}));
+
+const Footer = ({ className }) => {
+  const classes = useStyles();
   const rootClassName = classNames(classes.root, className);
   return (
     <div className={rootClassName}>
@@ -23,18 +35,7 @@ const Footer = ({ classes, className }) => {
 }
 
 Footer.propTypes = {
-  className: PropTypes.string,
-  classes: PropTypes.object.isRequired
+  className: PropTypes.string
 };
 
-const styles = theme => ({
-  root: {
-    padding: theme.spacing(4)
-  },
-  company: {
-    marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(0.5)
-  }
-});
-
-export default withStyles(styles)(Footer);
+export default Footer;

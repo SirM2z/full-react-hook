@@ -3,7 +3,6 @@ import {
   Grid,
   CircularProgress,
   Typography,
-  withStyles,
   Button,
   Tabs,
   Tab,
@@ -11,11 +10,13 @@ import {
   Fade
 } from "@material-ui/core";
 import classnames from "classnames";
+import { makeStyles } from '@material-ui/core/styles';
 
 import logo from "./logo.svg";
 import google from "assets/svg/google.svg";
 
-const Login = ({ classes }) => {
+const Login = () => {
+  const classes = useStyles();
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState(false);
 
@@ -250,7 +251,7 @@ const Login = ({ classes }) => {
   )
 };
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   container: {
     height: "100vh",
     width: "100vw",
@@ -395,6 +396,6 @@ const styles = theme => ({
       bottom: theme.spacing(2),
     }
   }
-});
+}));
 
-export default withStyles(styles, { withTheme: true })(Login);
+export default Login;

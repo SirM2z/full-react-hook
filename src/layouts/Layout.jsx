@@ -1,59 +1,15 @@
 import React, { useState } from 'react';
 import classNames from 'classnames';
-import { withStyles, Drawer } from '@material-ui/core';
-import { useTheme } from '@material-ui/core/styles';
+import { Drawer } from '@material-ui/core';
+import { useTheme, makeStyles } from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import Routes from '../Routes';
 import Topbar from './Topbar';
+import Sidebar from './Sidebar';
 import Footer from './Footer';
 
-const Layouts = ({classes, title, ...props}) => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-
-  const [isOpen, setIsOpen] = useState(!isMobile);
-  function handleClose() {
-    setIsOpen(false);
-  }
-  function handleToggleOpen() {
-    setIsOpen(prevIsOpen => !prevIsOpen)
-  }
-  const shiftTopbar = isOpen && !isMobile;
-  const shiftContent = isOpen && !isMobile;
-  return (
-    <React.Fragment>
-      <Topbar
-        className={classNames(classes.topbar, {
-          [classes.topbarShift]: shiftTopbar
-        })}
-        isSidebarOpen={isOpen}
-        onToggleSidebar={handleToggleOpen}
-        // title={title}
-        title='Layout'
-      />
-      <Drawer
-        anchor="left"
-        classes={{ paper: classes.drawerPaper }}
-        onClose={handleClose}
-        open={isOpen}
-        variant={isMobile ? 'temporary' : 'persistent'}
-      >
-        {/* <Sidebar className={classes.sidebar} /> */}
-      </Drawer>
-      <main
-        className={classNames(classes.content, {
-          [classes.contentShift]: shiftContent
-        })}
-      >
-        {/* <Routes {...props} /> */}
-        <Footer />
-      </main>
-    </React.Fragment>
-  )
-}
-
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   topbar: {
     position: 'fixed',
     width: '100%',
@@ -87,6 +43,52 @@ const styles = theme => ({
   contentShift: {
     marginLeft: '270px'
   }
-});
+}));
 
-export default withStyles(styles)(Layouts);
+const Layouts = ({ title, ...props }) => {
+  const classes = useStyles();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
+  const [isOpen, setIsOpen] = useState(!isMobile);
+  function handleClose() {
+    setIsOpen(false);
+  }
+  function handleToggleOpen() {
+    setIsOpen(prevIsOpen => !prevIsOpen)
+  }
+  const shiftTopbar = isOpen && !isMobile;
+  const shiftContent = isOpen && !isMobile;
+  return (
+    <React.Fragment>
+      <Topbar
+        className={classNames(classes.topbar, {
+          [classes.topbarShift]: shiftTopbar
+        })}
+        isSidebarOpen={isOpen}
+        onToggleSidebar={handleToggleOpen}
+        // title={title}
+        title='Layout'
+      />
+      <Drawer
+        anchor="left"
+        classes={{ paper: classes.drawerPaper }}
+        onClose={handleClose}
+        open={isOpen}
+        variant={isMobile ? 'temporary' : 'persistent'}
+      >
+        <Sidebar className={classes.sidebar} />
+      </Drawer>
+      <main
+        className={classNames(classes.content, {
+          [classes.contentShift]: shiftContent
+        })}
+      >
+        <Routes {...props} />
+        <Footer />
+      </main>
+    </React.Fragment>
+  )
+}
+
+export default Layouts;

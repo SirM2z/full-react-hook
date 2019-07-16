@@ -10,10 +10,9 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  Typography,
-  withStyles
+  Typography
 } from '@material-ui/core';
-
+import { makeStyles } from '@material-ui/core/styles';
 import {
   ArrowForwardIos as ArrowForwardIosIcon,
   Payment as PaymentIcon,
@@ -43,10 +42,10 @@ const icons = {
 
 const NotificationList = ({
   className,
-  classes,
   notifications,
   onSelect
 }) => {
+  const classes = useStyles();
   const rootClassName = classNames(classes.root, className);
   return (
     <div className={rootClassName}>
@@ -121,7 +120,6 @@ const NotificationList = ({
 
 NotificationList.propTypes = {
   className: PropTypes.string,
-  classes: PropTypes.object.isRequired,
   notifications: PropTypes.array.isRequired,
   onSelect: PropTypes.func
 };
@@ -131,7 +129,7 @@ NotificationList.defaultProps = {
   onSelect: () => {}
 };
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   root: {
     width: '350px',
     maxWidth: '100%'
@@ -190,6 +188,6 @@ const styles = theme => ({
     maxWidth: '100%',
     height: 'auto'
   }
-});
+}));
 
-export default withStyles(styles)(NotificationList);
+export default NotificationList;

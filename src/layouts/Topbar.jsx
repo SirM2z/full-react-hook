@@ -7,9 +7,9 @@ import {
   IconButton,
   Popover,
   Toolbar,
-  Typography, 
-  withStyles
+  Typography
 } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import {
   Menu as MenuIcon,
   Close as CloseIcon,
@@ -21,13 +21,13 @@ import NotificationList from './NotificationList'
 import { getNotifications } from 'services/notification';
 
 const Topbar = ({
-  classes,
   className,
   onToggleSidebar,
   isSidebarOpen,
   title,
   history
 }) => {
+  const classes = useStyles();
   const notificationsLimit = 4;
   const rootClassName = classNames(classes.root, className);
   function handleSignOut() {
@@ -121,7 +121,6 @@ const Topbar = ({
 
 Topbar.propTypes = {
   className: PropTypes.string,
-  classes: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
   isSidebarOpen: PropTypes.bool,
   onToggleSidebar: PropTypes.func,
@@ -132,7 +131,7 @@ Topbar.defaultProps = {
   onToggleSidebar: () => {}
 };
 
-const style = theme => ({
+const useStyles = makeStyles(theme => ({
   root: {
     borderBottom: `1px solid ${theme.palette.border}`,
     backgroundColor: theme.palette.common.white,
@@ -157,6 +156,6 @@ const style = theme => ({
   signOutButton: {
     marginLeft: theme.spacing(1)
   }
-});
+}));
 
-export default withRouter(withStyles(style)(Topbar));
+export default withRouter(Topbar);
