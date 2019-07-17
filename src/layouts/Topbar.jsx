@@ -77,7 +77,6 @@ const Topbar = ({
               aria-label="Open drawer"
               onClick={onToggleSidebar}
               edge="start"
-              className={classes.menuButton}
             >
               { isSidebarOpen ? <ChevronLeftIcon /> : <MenuIcon />}
             </IconButton>
@@ -162,11 +161,8 @@ const useStyles = makeStyles(theme => ({
       duration: theme.transitions.duration.enteringScreen,
     }),
   },
-  menuButton: {
-    marginRight: 36,
-  },
   title: {
-    marginLeft: theme.spacing(1)
+    marginLeft: theme.spacing(1) + 3
   },
   notificationsButton: {
     marginLeft: 'auto'
