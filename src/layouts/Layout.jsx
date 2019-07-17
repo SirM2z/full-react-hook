@@ -1,94 +1,102 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import classNames from 'classnames';
-import { Drawer } from '@material-ui/core';
-import { useTheme, makeStyles } from '@material-ui/core/styles';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
+import {
+  useMediaQuery,
+  Drawer,
+  CssBaseline
+} from '@material-ui/core';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 
 import Routes from '../Routes';
 import Topbar from './Topbar';
 import Sidebar from './Sidebar';
 import Footer from './Footer';
 
-const useStyles = makeStyles(theme => ({
-  topbar: {
-    position: 'fixed',
-    width: '100%',
-    top: 0,
-    left: 0,
-    right: 'auto',
-    transition: theme.transitions.create(['margin', 'width'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen
-    })
-  },
-  topbarShift: {
-    marginLeft: '271px',
-    width: 'calc(-271px + 100vw)'
-  },
-  drawerPaper: {
-    zIndex: 1200,
-    width: '271px'
-  },
-  sidebar: {
-    width: '270px'
-  },
-  content: {
-    marginTop: '64px',
-    backgroundColor: theme.palette.background.default,
-    transition: theme.transitions.create('margin', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen
-    })
-  },
-  contentShift: {
-    marginLeft: '270px'
-  }
-}));
-
-const Layouts = ({ title, ...props }) => {
+const Layout = ({ title, ...props }) => {
   const classes = useStyles();
+  const [isOpen, setIsOpen] = useState(true);
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  useEffect(() => {
+    setIsOpen(!isMobile);
+  }, [isMobile]);
 
-  const [isOpen, setIsOpen] = useState(!isMobile);
-  function handleClose() {
-    setIsOpen(false);
-  }
   function handleToggleOpen() {
     setIsOpen(prevIsOpen => !prevIsOpen)
   }
-  const shiftTopbar = isOpen && !isMobile;
-  const shiftContent = isOpen && !isMobile;
+
   return (
-    <React.Fragment>
+    <div className={classes.root}>
+      <CssBaseline />
       <Topbar
-        className={classNames(classes.topbar, {
-          [classes.topbarShift]: shiftTopbar
-        })}
         isSidebarOpen={isOpen}
         onToggleSidebar={handleToggleOpen}
         // title={title}
         title='Layout'
       />
       <Drawer
-        anchor="left"
-        classes={{ paper: classes.drawerPaper }}
-        onClose={handleClose}
-        open={isOpen}
-        variant={isMobile ? 'temporary' : 'persistent'}
-      >
-        <Sidebar className={classes.sidebar} />
-      </Drawer>
-      <main
-        className={classNames(classes.content, {
-          [classes.contentShift]: shiftContent
+        variant="permanent"
+        className={classNames(classes.drawer, {
+          [classes.drawerOpen]: isOpen,
+          [classes.drawerClose]: !isOpen,
         })}
+        classes={{
+          paper: classNames({
+            [classes.drawerOpen]: isOpen,
+            [classes.drawerClose]: !isOpen,
+          }),
+        }}
+        open={isOpen}
       >
-        <Routes {...props} />
+        <Sidebar isSidebarOpen={isOpen} />
+      </Drawer>
+      <main className={classes.contentWrapper}>
+        <div className={classes.toolbar} />
+        <div className={classes.content}>
+          <Routes {...props} />
+        </div>
         <Footer />
       </main>
-    </React.Fragment>
-  )
+    </div>
+  );
 }
 
-export default Layouts;
+const useStyles = makeStyles(theme => ({
+  root: {
+    display: 'flex',
+  },
+  drawer: {
+    width: theme.layout.drawerWidth,
+    flexShrink: 0,
+    whiteSpace: 'nowrap',
+  },
+  drawerOpen: {
+    width: theme.layout.drawerWidth,
+    transition: theme.transitions.create('width', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  },
+  drawerClose: {
+    transition: theme.transitions.create('width', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+    overflowX: 'hidden',
+    width: theme.spacing(0),
+    [theme.breakpoints.up('sm')]: {
+      width: theme.spacing(8) + 1,
+    },
+  },
+  toolbar: {
+    ...theme.mixins.toolbar,
+  },
+  contentWrapper: {
+    flexGrow: 1,
+  },
+  content: {
+    padding: theme.spacing(2)
+  }
+}));
+
+export default Layout;

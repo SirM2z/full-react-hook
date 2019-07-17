@@ -6,15 +6,16 @@ import {
   Badge,
   IconButton,
   Popover,
+  AppBar,
   Toolbar,
   Typography
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Menu as MenuIcon,
-  Close as CloseIcon,
   NotificationsOutlined as NotificationsIcon,
-  Input as InputIcon
+  Input as InputIcon,
+  ChevronLeft as ChevronLeftIcon
 } from '@material-ui/icons';
 
 import NotificationList from './NotificationList'
@@ -63,39 +64,44 @@ const Topbar = ({
   return (
     <React.Fragment>
       <div className={rootClassName}>
-        <Toolbar className={classes.toolbar}>
-          <IconButton
-            className={classes.menuButton}
-            onClick={onToggleSidebar}
-            variant="text"
-          >
-            {isSidebarOpen ? <CloseIcon /> : <MenuIcon />}
-          </IconButton>
-          <Typography
-            className={classes.title}
-            variant="h4"
-          >
-            {title}
-          </Typography>
-          <IconButton
-            className={classes.notificationsButton}
-            onClick={handleShowNotifications}
-          >
-            <Badge
-              badgeContent={notificationsCount}
-              color="primary"
-              variant="dot"
+        <AppBar
+          elevation={0}
+          position="fixed"
+          color="inherit"
+          className={classNames(classes.appBar, {
+            [classes.appBarShift]: isSidebarOpen,
+          })}
+        >
+          <Toolbar>
+            <IconButton
+              aria-label="Open drawer"
+              onClick={onToggleSidebar}
+              edge="start"
+              className={classes.menuButton}
             >
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
-          <IconButton
-            className={classes.signOutButton}
-            onClick={handleSignOut}
-          >
-            <InputIcon />
-          </IconButton>
-        </Toolbar>
+              { isSidebarOpen ? <ChevronLeftIcon /> : <MenuIcon />}
+            </IconButton>
+            <Typography className={classes.title} variant="h4" noWrap>{title}</Typography>
+            <IconButton
+              className={classes.notificationsButton}
+              onClick={handleShowNotifications}
+            >
+              <Badge
+                badgeContent={notificationsCount}
+                color="primary"
+                variant="dot"
+              >
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
+            <IconButton
+              className={classes.signOutButton}
+              onClick={handleSignOut}
+            >
+              <InputIcon />
+            </IconButton>
+          </Toolbar>
+        </AppBar>
       </div>
       <Popover
         anchorEl={notificationsEl}
@@ -132,23 +138,35 @@ Topbar.defaultProps = {
 };
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    borderBottom: `1px solid ${theme.palette.border}`,
-    backgroundColor: theme.palette.common.white,
-    display: 'flex',
-    alignItems: 'center',
-    height: '64px',
-    zIndex: theme.zIndex.appBar
+  // root: {
+  //   borderBottom: `1px solid ${theme.palette.border}`,
+  //   backgroundColor: theme.palette.common.white,
+  //   display: 'flex',
+  //   alignItems: 'center',
+  //   height: '64px',
+  //   zIndex: theme.zIndex.appBar
+  // },
+  appBar: {
+    zIndex: theme.zIndex.drawer + 1,
+    borderBottom: '1px solid ' + theme.palette.divider,
+    transition: theme.transitions.create(['width', 'margin'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
   },
-  toolbar: {
-    minHeight: 'auto',
-    width: '100%'
+  appBarShift: {
+    marginLeft: theme.layout.drawerWidth,
+    width: `calc(100% - ${theme.layout.drawerWidth}px)`,
+    transition: theme.transitions.create(['width', 'margin'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  },
+  menuButton: {
+    marginRight: 36,
   },
   title: {
     marginLeft: theme.spacing(1)
-  },
-  menuButton: {
-    marginLeft: '-4px'
   },
   notificationsButton: {
     marginLeft: 'auto'

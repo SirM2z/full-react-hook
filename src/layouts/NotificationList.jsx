@@ -111,7 +111,7 @@ const NotificationList = ({
               src="/images/empty.png"
             />
           </div>
-          <Typography variant="h4">There's nothing here...</Typography>
+          <Typography variant="h4">什么也没有...</Typography>
         </div>
       )}
     </div>
