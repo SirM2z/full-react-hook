@@ -23,6 +23,9 @@ import {
   StarBorder as StarBorderIcon,
 } from '@material-ui/icons';
 
+import { getLS } from 'utils';
+import { USER_INFO } from 'constant';
+
 const ListItemLink = React.forwardRef((props, ref) => (
   <NavLink innerRef={ref} {...props} />
 ));
@@ -39,7 +42,7 @@ const Sidebar = ({ className, isSidebarOpen }) => {
           className={classes.logoLink}
           to="/app"
         >
-          <Typography variant="h3">Ryan's Admin</Typography>
+          <Typography variant="h3">Money Above All</Typography>
         </Link>
       </div>
       {isSidebarOpen ? (
@@ -57,7 +60,7 @@ const Sidebar = ({ className, isSidebarOpen }) => {
               className={classes.nameText}
               variant="h6"
             >
-              Ryan
+              {getLS(USER_INFO).username || '你做了什么'}
             </Typography>
             <Typography
               className={classes.bioText}
@@ -192,7 +195,7 @@ Sidebar.propTypes = {
 
 const useStyles = makeStyles(theme => ({
   root: {
-    width: theme.layout.drawerWidth,
+    // width: theme.layout.drawerWidth,
     backgroundColor: theme.palette.common.white,
     display: 'flex',
     flexDirection: 'column',

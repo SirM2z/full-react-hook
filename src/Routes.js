@@ -1,6 +1,8 @@
 import React from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 
+import { USER_TOKEN } from './constant';
+import { getLS } from './utils';
 import Layout from './layouts';
 import Login from './pages/Login';
 import Users from './pages/UserList';
@@ -11,9 +13,11 @@ function NoMatch({location}) {
   </h3>);
 }
 
-const isLogin = true;
-
 const pageRoutes = [
+  {
+    path: "/",
+    redirect: "/app"
+  },
   {
     path: "/login",
     component: Login
@@ -28,6 +32,7 @@ const pageRoutes = [
       },
       {
         path: "/app/users",
+        auth: true,
         component: Users
       },
       {
@@ -53,20 +58,26 @@ function RouteWithSubRoutes(route, i) {
         exact={!route.routes}
         path={route.path}
         render={props => {
-          // pass the sub-routes down to keep nesting
           if (route.auth) {
-            if (isLogin) {
-              return <route.component key={uniqueKey} {...props} routes={route.routes} />
+            // need Authorization
+            if (getLS(USER_TOKEN)) {
+              // localstorage exist token
+              return <route.component key={uniqueKey} {...props} routes={route.routes} />;
             } else {
+              // no token redirect to login
               return <Redirect to={{
                 pathname: '/login',
                 state: {
                   from: route.path
                 }
-              }} />
+              }} />;
             }
+          } else if (route.path === '/login' && getLS(USER_TOKEN)) {
+            // go login & exist token => redirect to app
+            return <Redirect to='/' />;
           } else {
-            return <route.component key={uniqueKey} {...props} routes={route.routes} />
+            // next
+            return <route.component key={uniqueKey} {...props} routes={route.routes} />;
           }
         }}
       />
