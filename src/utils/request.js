@@ -4,6 +4,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { getLS } from './index';
 import { USER_TOKEN } from 'constant';
+import { logout } from 'services/user';
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -25,7 +26,9 @@ const codeMessage = {
 
 // create an axios instance
 const request = axios.create({
-  baseURL: 'http://localhost:5000',
+  baseURL: process.env.NODE_ENV === 'production'
+    ? process.env.REACT_APP_API_PRO
+    : process.env.REACT_APP_API_DEV,
   // withCredentials: true,
   timeout: 5000
 });
@@ -47,7 +50,7 @@ request.interceptors.response.use(
   response => {
     const res = response.data;
     if (res.status === 'success') {
-      return res;
+      return res.result;
     } else {
       const msg = res.message || '服务器出错';
       toast.warn(`🦄 ${msg}`)
@@ -56,10 +59,37 @@ request.interceptors.response.use(
   },
   error => {
     const {response} = error;
-    const errortext = response.data.message || codeMessage[response.status] || 'Error';
-    toast.error(`🦄 ${errortext}`);
+    if (response.status === 403 && response.data.message === 'Token error: jwt expired') {
+      logout();
+      toast.error(`🦄 需要重新登录`);
+    } else {
+      const errortext = response.data.message || codeMessage[response.status] || 'Error';
+      toast.error(`🦄 ${errortext}`);
+    }
     return Promise.reject(error);
   }
 );
 
-export default request;
+export default {
+  get(url, params) {
+    return request({
+      method: 'get',
+      url: url,
+      params
+    })
+  },
+  post(url, data) {
+    return request({
+      method: 'post',
+      url: url,
+      data: data
+    })
+  },
+  form(url, formdata) {
+    return request({
+      method: 'post',
+      url: url,
+      data: formdata
+    })
+  }
+};

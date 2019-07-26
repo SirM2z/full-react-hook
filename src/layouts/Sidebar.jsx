@@ -35,6 +35,12 @@ const Sidebar = ({ className, isSidebarOpen }) => {
   const rootClassName = classNames(classes.root, className);
   const [systemOpen, setSystemOpen] = useState(true);
 
+  let username = '你做了什么';
+  const userInfo = getLS(USER_INFO);
+  if (userInfo && userInfo.username) {
+    username = userInfo.username;
+  }
+
   return (
     <nav className={rootClassName}>
       <div className={classes.toolbar}>
@@ -42,7 +48,7 @@ const Sidebar = ({ className, isSidebarOpen }) => {
           className={classes.logoLink}
           to="/app"
         >
-          <Typography variant="h3">Money Above All</Typography>
+          <Typography variant="h3">React Material Admin</Typography>
         </Link>
       </div>
       {isSidebarOpen ? (
@@ -60,7 +66,7 @@ const Sidebar = ({ className, isSidebarOpen }) => {
               className={classes.nameText}
               variant="h6"
             >
-              {getLS(USER_INFO).username || '你做了什么'}
+              {username}
             </Typography>
             <Typography
               className={classes.bioText}
